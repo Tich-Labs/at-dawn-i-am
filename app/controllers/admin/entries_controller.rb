@@ -7,10 +7,24 @@ class Admin::EntriesController < ApplicationController
   end
 
   def show
+    @entry = Entry.find(params[:id])
+    render :show
   end
 
   def new
     @entry = Entry.new
+  end
+
+  def edit
+  end
+
+  def update
+    @entry = Entry.find(params[:id])
+    if @entry.update(entry_params)
+      redirect_to admin_entries_path(highlighted_entry: @entry.id), notice: "Entry was successfully updated."
+    else
+      render :edit, status: :unprocessable_entity
+    end
   end
 
   def create
@@ -22,26 +36,9 @@ class Admin::EntriesController < ApplicationController
     end
   end
 
-  def edit
-  end
-
-  def update
-    if @entry.update(entry_params)
-      redirect_to admin_entries_path(highlighted_entry: @entry.id), notice: "Entry was successfully updated."
-    else
-      render :edit, status: :unprocessable_entity
-    end
-  end
-
   def destroy
     @entry.destroy
     redirect_to admin_entries_path, notice: "Entry was successfully destroyed."
-  end
-
-  private
-
-  def set_entry
-    @entry = Entry.find(params[:id])
   end
 
   def update_status
@@ -63,22 +60,25 @@ class Admin::EntriesController < ApplicationController
       flash[:alert] = "Invalid status"
     end
 
-    redirect_to admin_entry_path(@entry)
+    redirect_to admin_entries_path(highlighted_entry: @entry.id)
   end
 
   private
+
+  def set_entry
+    @entry = Entry.find(params[:id])
+  end
 
   def entry_params
     params.require(:entry).permit(:date, :body, :image, :status)
   end
 
-  private
-
+  helper_method :current_admin_user
   def current_admin_user
     @current_admin_user ||= AdminUser.find_by(id: session[:admin_user_id]) if session[:admin_user_id]
   end
-  helper_method :current_admin_user
 
+  helper_method :authenticate_admin!
   def authenticate_admin!
     redirect_to admin_login_path unless current_admin_user
   end
