@@ -5,92 +5,73 @@
       <%= link_to "New Entry", new_admin_entry_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-stone-800 hover:bg-stone-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500" %>
     </div>
   </div>
-  <div class="bg-white shadow overflow-hidden sm:rounded-md">
-    <ul class="divide-y divide-stone-200">
-          <% @entries.each do |entry| %>
-            <li class="p-6 hover:bg-stone-50 transition-colors <%= 'entry-highlighted' if params[:highlighted_entry] == entry.id.to_s %>" id="entry-<%= entry.id %>">
-              <div class="flex items-center justify-between">
-                <div class="flex-1">
-                  <div class="flex items-center">
-                    <div>
-                      <h3 class="text-lg font-medium text-stone-900">
-                        <%= link_to entry.date.strftime("%B %d, %Y"), admin_entry_path(entry), class: "hover:text-stone-600" %>
-                      </h3>
-                      <div class="mt-2 text-sm text-stone-500 line-clamp-2">
-                        <%= entry.body.truncate(150) %>
-                      </div>
+  <% if @entries.any? %>
+    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+      <ul class="divide-y divide-stone-200">
+        <% @entries.each do |entry| %>
+          <li class="p-6 hover:bg-stone-50 transition-colors <%= 'entry-highlighted' if params[:highlighted_entry] == entry.id.to_s %>" id="entry-<%= entry.id %>">
+            <div class="flex items-center justify-between">
+              <div class="flex-1">
+                <div class="flex items-center">
+                  <div>
+                    <h3 class="text-lg font-medium text-stone-900">
+                      <%= link_to entry.date.strftime("%B %d, %Y"), admin_entry_path(entry), class: "hover:text-stone-600" %>
+                    </h3>
+                    <div class="mt-2 text-sm text-stone-500 line-clamp-2">
+                      <%= entry.body.truncate(150) %>
                     </div>
                   </div>
-                  <div class="mt-4 flex items-center text-sm text-stone-500 space-x-4">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold <%= entry.status_badge_color %>">
-                      <%= entry.status.upcase %>
+                </div>
+                <div class="mt-4 flex items-center text-sm text-stone-500 space-x-4">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold <%= entry.status_badge_color %>">
+                    <%= entry.status.upcase %>
+                  </span>
+                  <span>Created: <%= entry.created_at.strftime("%b %d, %Y") %></span>
+                  <% if entry.image.attached? %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-800">
+                      📷 Image
                     </span>
-                    <span>Created: <%= entry.created_at.strftime("%b %d, %Y") %></span>
-                    <% if entry.image.attached? %>
-                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-800">
-                        📷 Image
-                      </span>
-                    <% end %>
-                  </div>
-                  <div class="mt-3 flex items-center space-x-2">
-                    <% if entry.published? %>
-                      <%= form_with(url: update_status_admin_entry_path(entry), method: :patch, data: { turbo: false, confirm: "Hide this entry from public view?" }) do |form| %>
-                        <%= form.hidden_field :status, value: 'hidden' %>
-                        <%= form.submit "👁️ Hide", class: "text-xs px-3 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded-md transition-colors cursor-pointer hover:shadow active:scale-95" %>
-                      <% end %>
-                    <% elsif entry.hidden? %>
-                      <%= form_with(url: update_status_admin_entry_path(entry), method: :patch, data: { turbo: false }) do |form| %>
-                        <%= form.hidden_field :status, value: 'published' %>
-                        <%= form.submit "👁️‍🗨️ Show", class: "text-xs px-3 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded-md transition-colors cursor-pointer hover:shadow active:scale-95" %>
-                      <% end %>
-                    <% elsif entry.draft? %>
-                      <%= button_to update_status_admin_entry_path(entry, status: 'published'), 
-                          method: :patch,
-                          form: { data: { turbo: false } },
-                          class: "text-xs px-3 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded-md transition-colors" do %>
-                        📤 Publish
-                      <% end %>
-                    <% end %>
-                    <% if entry.draft? || entry.hidden? %>
-                      <%= link_to "Edit", edit_admin_entry_path(entry), class: "inline-flex items-center px-3 py-2 border border-stone-300 shadow-sm text-sm leading-4 font-medium rounded-md text-stone-700 bg-white hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500" %>
-                    <% end %>
                   <% end %>
                 </div>
+                <div class="mt-3 flex items-center space-x-2">
+                  <% if entry.published? %>
+                    <%= link_to "👁️ Hide", update_status_admin_entry_path(entry, status: 'hidden'), method: :patch, data: { turbo: false, confirm: "Hide this entry from public view?" }, class: "text-xs px-3 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded-md transition-colors cursor-pointer hover:shadow active:scale-95" %>
+                  <% elsif entry.hidden? %>
+                    <%= link_to "👁️‍🗨️ Show", update_status_admin_entry_path(entry, status: 'published'), method: :patch, data: { turbo: false }, class: "text-xs px-3 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded-md transition-colors cursor-pointer hover:shadow active:scale-95" %>
+                  <% elsif entry.draft? %>
+                    <%= link_to "📤 Publish", update_status_admin_entry_path(entry, status: 'published'), method: :patch, data: { turbo: false }, class: "text-xs px-3 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded-md transition-colors" %>
+                  <% end %>
+                  <%= link_to "Edit", edit_admin_entry_path(entry), class: "inline-flex items-center px-3 py-2 border border-stone-300 shadow-sm text-sm leading-4 font-medium rounded-md text-stone-700 bg-white hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500" %>
+                </div>
               </div>
-            </li>
-          <% end %>
-        </div>
-      </div>
+            </div>
+          </li>
+        <% end %>
+      </ul>
     </div>
-
-
-    </ul>
-</div>
-<% end %>
-<% end %>
-<% if @entries.empty? %>
-  <div class="text-center py-12">
-    <p class="text-stone-500">No journal entries yet.</p>
-    <p class="mt-2">
-      <%= link_to "Create your first entry", new_admin_entry_path, class: "text-stone-700 hover:text-stone-900 font-medium" %>
-    </p>
+  <% else %>
+    <div class="text-center py-12">
+      <p class="text-stone-500">No journal entries yet.</p>
+      <p class="mt-2">
+        <%= link_to "Create your first entry", new_admin_entry_path, class: "text-stone-700 hover:text-stone-900 font-medium" %>
+      </p>
+    </div>
+  <% end %>
+  <!-- Test section for debugging -->
+  <% if false %>  <!-- Set to true to see test buttons -->
+    <div class="border-t border-stone-200 pt-8 mt-8">
+      <h3 class="text-lg font-medium text-stone-900 mb-4">Button Testing Section</h3>
+      <% @entries.first(2).each do |entry| %>
+        <div class="mb-4 p-4 bg-stone-50 rounded">
+          <p class="font-medium"><%= entry.date.strftime("%B %d, %Y") %> - <%= entry.status %></p>
+          <%= render 'test_buttons', entry: entry %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+  <div class="mt-6">
+    <%= link_to "← Back to Dashboard", admin_root_path, class: "text-stone-600 hover:text-stone-800 transition-colors" %>
   </div>
-<% end %>
-<!-- Test section for debugging -->
-<% if false %>  <!-- Set to true to see test buttons -->
-  <div class="border-t border-stone-200 pt-8 mt-8">
-    <h3 class="text-lg font-medium text-stone-900 mb-4">Button Testing Section</h3>
-    <% @entries.first(2).each do |entry| %>
-      <div class="mb-4 p-4 bg-stone-50 rounded">
-        <p class="font-medium"><%= entry.date.strftime("%B %d, %Y") %> - <%= entry.status %></p>
-        <%= render 'test_buttons', entry: entry %>
-      </div>
-    <% end %>
-  </div>
-<% end %>
-<div class="mt-6">
-  <%= link_to "← Back to Dashboard", admin_root_path, class: "text-stone-600 hover:text-stone-800 transition-colors" %>
-</div>
 </div>
 <% if params[:highlighted_entry] %>
   <script>
