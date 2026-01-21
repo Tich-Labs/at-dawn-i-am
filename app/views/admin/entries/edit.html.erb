@@ -1,0 +1,74 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-serif text-stone-800">Edit Journal Entry</h1>
+    <p class="mt-2 text-stone-600">Update your diary entry from <%= @entry.date.strftime("%B %d, %Y") %></p>
+  </div>
+  <%= form_with(model: [:admin, @entry], local: true, class: "space-y-8") do |form| %>
+    <% if @entry.errors.any? %>
+      <div class="bg-red-50 border border-red-200 rounded-md p-4">
+        <div class="text-sm text-red-800">
+          <h2 class="font-medium"><%= pluralize(@entry.errors.count, "error") %> prohibited this entry from being saved:</h2>
+          <ul class="list-disc list-inside mt-2">
+            <% @entry.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    <% end %>
+    <div>
+      <%= form.label :date, class: "block text-sm font-medium text-stone-700" %>
+      <%= form.date_field :date, class: "mt-1 block w-full border-stone-300 rounded-md shadow-sm focus:ring-stone-500 focus:border-stone-500 sm:text-sm" %>
+    </div>
+    <div>
+      <%= form.label :status, "Entry Status", class: "block text-sm font-medium text-stone-700" %>
+      <div class="mt-2 grid grid-cols-2 gap-4">
+        <%= form.radio_button :status, 'draft', class: "sr-only peer" %>
+        <%= form.label :status_draft, class: "flex items-center py-3 px-6 border rounded-lg cursor-pointer peer-checked:bg-stone-100 peer-checked:border-stone-400 transition-colors w-full" do %>
+          <div class="flex flex-col items-center">
+            <span class="w-20 h-6 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium flex items-center justify-center mb-2">DRAFT</span>
+            <span class="text-sm text-stone-600">Save as draft</span>
+            <span class="text-xs text-stone-500">Hidden from public</span>
+          </div>
+        <% end %>
+        <%= form.radio_button :status, 'published', class: "sr-only peer" %>
+        <%= form.label :status_published, class: "flex items-center py-3 px-6 border rounded-lg cursor-pointer peer-checked:bg-stone-100 peer-checked:border-stone-400 transition-colors w-full" do %>
+          <div class="flex flex-col items-center">
+            <span class="w-20 h-6 bg-green-100 text-green-800 rounded-full text-xs font-medium flex items-center justify-center mb-2">PUBLISH</span>
+            <span class="text-sm text-stone-600">Publish immediately</span>
+            <span class="text-xs text-stone-500">Visible to public</span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div>
+      <%= form.label :body, "Entry Content", class: "block text-sm font-medium text-stone-700" %>
+      <p class="text-sm text-stone-500 mb-2">Write your diary entry. Line breaks will be preserved.</p>
+      <%= form.text_area :body, rows: 15, class: "mt-1 block w-full border-stone-300 rounded-md shadow-sm focus:ring-stone-500 focus:border-stone-500 sm:text-sm font-serif" %>
+    </div>
+    <div>
+      <%= form.label :image, "Update Image (Optional)", class: "block text-sm font-medium text-stone-700" %>
+      <%= form.file_field :image, class: "mt-1 block w-full text-sm text-stone-500
+        file:mr-4 file:py-2 file:px-4
+        file:rounded-md file:border-0
+        file:text-sm file:font-semibold
+        file:bg-stone-50 file:text-stone-700
+        hover:file:bg-stone-100" %>
+      <% if @entry.image.attached? %>
+        <div class="mt-4">
+          <p class="text-sm text-stone-600 mb-2">Current image:</p>
+          <%= image_tag @entry.image.variant(resize_to_limit: [200, 200]), class: "rounded-md" %>
+        </div>
+      <% end %>
+    </div>
+    <div class="flex justify-between">
+      <div>
+        <%= link_to "← Back to Dashboard", admin_root_path, class: "text-stone-600 hover:text-stone-800 transition-colors" %>
+      </div>
+      <div class="flex space-x-4">
+        <%= link_to "Cancel", admin_entry_path(@entry), class: "px-4 py-2 border border-stone-300 rounded-md shadow-sm text-sm font-medium text-stone-700 bg-white hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500" %>
+        <%= form.submit "Update Entry", class: "inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-stone-800 hover:bg-stone-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500" %>
+      </div>
+    </div>
+  <% end %>
+</div>

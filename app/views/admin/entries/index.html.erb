@@ -1,0 +1,106 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8">
+    <div class="flex justify-between items-center">
+      <h1 class="text-3xl font-serif text-stone-800">All Journal Entries</h1>
+      <%= link_to "New Entry", new_admin_entry_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-stone-800 hover:bg-stone-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500" %>
+    </div>
+  </div>
+  <div class="bg-white shadow overflow-hidden sm:rounded-md">
+    <ul class="divide-y divide-stone-200">
+      <% @entries.each do |entry| %>
+        <li class="p-6 hover:bg-stone-50 transition-colors <%= 'entry-highlighted' if params[:highlighted_entry] == entry.id.to_s %>" id="entry-<%= entry.id %>">
+          <div class="flex items-center justify-between">
+            <div class="flex-1">
+              <div class="flex items-center">
+                <div>
+                  <h3 class="text-lg font-medium text-stone-900">
+                    <%= link_to entry.date.strftime("%B %d, %Y"), admin_entry_path(entry), class: "hover:text-stone-600" %>
+                  </h3>
+                  <div class="mt-2 text-sm text-stone-500 line-clamp-2">
+                    <%= entry.body.truncate(150) %>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center text-sm text-stone-500 space-x-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold <%= entry.status_badge_color %>">
+                  <%= entry.status.upcase %>
+                </span>
+                <span>Created: <%= entry.created_at.strftime("%b %d, %Y") %></span>
+                <% if entry.image.attached? %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-800">
+                    📷 Image
+                  </span>
+                <% end %>
+              </div>
+              <div class="mt-3 flex items-center space-x-2">
+                <% if entry.published? %>
+                  <%= button_to update_status_admin_entry_path(entry, status: 'hidden'), 
+                      method: :patch, 
+                      form: { data: { turbo: false } },
+                      data: { confirm: "Hide this entry from public view?" },
+                      class: "text-xs px-3 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded-md transition-colors" do %>
+                    👁️ Hide
+                  <% end %>
+                <% elsif entry.hidden? %>
+                  <%= button_to update_status_admin_entry_path(entry, status: 'published'), 
+                      method: :patch,
+                      form: { data: { turbo: false } },
+                      class: "text-xs px-3 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded-md transition-colors" do %>
+                    👁️‍🗨️ Show
+                  <% end %>
+                <% elsif entry.draft? %>
+                  <%= button_to update_status_admin_entry_path(entry, status: 'published'), 
+                      method: :patch,
+                      form: { data: { turbo: false } },
+                      class: "text-xs px-3 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded-md transition-colors" do %>
+                    📤 Publish
+                  <% end %>
+                <% end %>
+                <% if entry.draft? || entry.hidden? %>
+                  <%= button_to update_status_admin_entry_path(entry, status: 'published'), 
+                      method: :patch,
+                      form: { data: { turbo: false } },
+                      class: "text-xs px-3 py-1 bg-stone-50 hover:bg-stone-100 text-stone-700 rounded-md transition-colors" do %>
+                    ✏️ Edit
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+            <div class="ml-6 flex-shrink-0 flex space-x-2">
+              <%= link_to "Edit", edit_admin_entry_path(entry), class: "inline-flex items-center px-3 py-2 border border-stone-300 shadow-sm text-sm leading-4 font-medium rounded-md text-stone-700 bg-white hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500" %>
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+  <% if @entries.empty? %>
+    <div class="text-center py-12">
+      <p class="text-stone-500">No journal entries yet.</p>
+      <p class="mt-2">
+        <%= link_to "Create your first entry", new_admin_entry_path, class: "text-stone-700 hover:text-stone-900 font-medium" %>
+      </p>
+    </div>
+  <% end %>
+  <div class="mt-6">
+    <%= link_to "← Back to Dashboard", admin_root_path, class: "text-stone-600 hover:text-stone-800 transition-colors" %>
+  </div>
+</div>
+<% if params[:highlighted_entry] %>
+  <script>
+    document.addEventListener('turbo:load', function() {
+      const highlightedElement = document.querySelector('.entry-highlighted');
+      if (highlightedElement) {
+        highlightedElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+
+        // Clean URL after scrolling
+        const url = new URL(window.location);
+        url.searchParams.delete('highlighted_entry');
+        window.history.replaceState({}, '', url);
+      }
+    });
+  </script>
+<% end %>
