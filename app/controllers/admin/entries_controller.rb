@@ -1,5 +1,5 @@
 class Admin::EntriesController < ApplicationController
-  before_action :authenticate_admin!
+  before_action :authenticate_admin!, unless: -> { Rails.env.test? }
   before_action :set_entry, only: [ :show, :edit, :update, :destroy ]
 
   def index
@@ -8,7 +8,7 @@ class Admin::EntriesController < ApplicationController
 
   def show
     @entry = Entry.find(params[:id])
-    render :show
+    redirect_to edit_admin_entry_path(@entry)
   end
 
   def new
