@@ -10,7 +10,11 @@
       "envVars": [
         {
           "key": "RAILS_MASTER_KEY",
-          "value": "YOUR_MASTER_KEY_HERE"
+          "value": "${RAILS_MASTER_KEY}"
+        },
+        {
+          "key": "SECRET_KEY_BASE",
+          "value": "${SECRET_KEY_BASE}"
         },
         {
           "key": "RAILS_ENV",
