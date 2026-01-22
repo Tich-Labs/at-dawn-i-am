@@ -1,9 +1,6 @@
 require "test_helper"
 
 class Admin::EntriesControllerTest < ActionDispatch::IntegrationTest
-  def setup
-    @request = ActionController::TestCase.new.get("http://test.host/admin/entries")
-  end
   test "should get index" do
     get admin_entries_url
     assert_response :success
