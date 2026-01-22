@@ -5,7 +5,7 @@
       "name": "at-dawn-i-am",
       "env": "ruby",
       "plan": "free",
-      "buildCommand": "bundle install && rails assets:precompile",
+      "buildCommand": "bundle install && chmod +x debug-env.sh && ./debug-env.sh && rails assets:precompile",
       "startCommand": "bundle exec rails db:migrate && bundle exec puma -C config/puma.rb",
       "envVars": [
         {
@@ -19,6 +19,10 @@
         {
           "key": "DATABASE_URL",
           "value": "${DATABASE_URL}"
+        },
+        {
+          "key": "SECRET_KEY_BASE",
+          "value": "${SECRET_KEY_BASE}"
         }
       ]
     }
