@@ -5,8 +5,8 @@
       "name": "at-dawn-i-am",
       "env": "ruby",
       "plan": "free",
-      "buildCommand": "bundle install && rails db:migrate && rails assets:precompile",
-      "startCommand": "rails server -b 0.0.0.0",
+      "buildCommand": "bundle install && rails assets:precompile",
+      "startCommand": "rails db:migrate && rails server -b 0.0.0.0",
       "envVars": [
         {
           "key": "RAILS_MASTER_KEY",
