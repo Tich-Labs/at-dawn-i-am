@@ -18,7 +18,7 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-
+ 
 
 development:
   <<: *default
@@ -26,11 +26,11 @@ development:
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
-  # When left blank, PostgreSQL will use the default role. This is
-  # the same name as the operating system user running Rails.
+  # When left blank, PostgreSQL will use default role. This is
+  # same name as operating system user running Rails.
   #username: at_dawn_i_am
 
-  # The password associated with the PostgreSQL role (username).
+  # The password associated with PostgreSQL role (username).
   #password:
 
   # Connect on a TCP socket. Omitted by default since the client uses a
@@ -85,20 +85,5 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  primary: &primary_production
-    <<: *default
-    database: at_dawn_i_am_production
-    username: at_dawn_i_am
-    password: <%= ENV["AT_DAWN_I_AM_DATABASE_PASSWORD"] %>
-  cache:
-    <<: *primary_production
-    database: at_dawn_i_am_production_cache
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    database: at_dawn_i_am_production_queue
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    database: at_dawn_i_am_production_cable
-    migrations_paths: db/cable_migrate
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>
