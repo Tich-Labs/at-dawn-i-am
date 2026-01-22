@@ -1,27 +1,33 @@
-services:
-  - type: web
-    name: at-dawn-i-am
-    env: ruby
-    plan: free
-    buildCommand: bundle install && rails db:migrate && rails assets:precompile
-    startCommand: rails server -b 0.0.0.0
-    envVars:
-      - key: RAILS_MASTER_KEY
-        value: YOUR_MASTER_KEY_HERE
-      - key: RAILS_ENV
-        value: production
-      - key: DATABASE_URL
-        value: ${DATABASE_URL}
-      - key: AWS_ACCESS_KEY_ID
-        value: ${AWS_ACCESS_KEY_ID}
-      - key: AWS_SECRET_ACCESS_KEY
-        value: ${AWS_SECRET_ACCESS_KEY}
-      - key: AWS_S3_BUCKET
-        value: ${AWS_S3_BUCKET}
-      - key: AWS_REGION
-        value: us-east-1
-
-databases:
-  - type: postgres
-    name: at-dawn-i-am-db
-    plan: free
+{
+  "services": [
+    {
+      "type": "web",
+      "name": "at-dawn-i-am",
+      "env": "ruby",
+      "plan": "free",
+      "buildCommand": "bundle install && rails db:migrate && rails assets:precompile",
+      "startCommand": "rails server -b 0.0.0.0",
+      "envVars": [
+        {
+          "key": "RAILS_MASTER_KEY",
+          "value": "YOUR_MASTER_KEY_HERE"
+        },
+        {
+          "key": "RAILS_ENV",
+          "value": "production"
+        },
+        {
+          "key": "DATABASE_URL",
+          "value": "${DATABASE_URL}"
+        }
+      ]
+    }
+  ],
+  "databases": [
+    {
+      "type": "postgres",
+      "name": "at-dawn-i-am-db",
+      "plan": "free"
+    }
+  ]
+}
