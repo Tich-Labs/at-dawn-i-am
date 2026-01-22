@@ -1,0 +1,10 @@
+<%= form_with(url: update_status_admin_entry_path(entry), method: :patch, local: true, class: "inline-block") do |form| %>
+  <%= form.hidden_field :status, value: 'hidden' %>
+  <%= form.submit "Test Hide Button", class: "bg-red-500 text-white px-3 py-1 rounded cursor-pointer" %>
+<% end %>
+<% if entry.hidden? %>
+  <%= form_with(url: update_status_admin_entry_path(entry), method: :patch, local: true, class: "inline-block") do |form| %>
+    <%= form.hidden_field :status, value: 'published' %>
+    <%= form.submit "Test Show Button", class: "bg-green-500 text-white px-3 py-1 rounded cursor-pointer" %>
+  <% end %>
+<% end %>
