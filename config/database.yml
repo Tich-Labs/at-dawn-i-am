@@ -27,7 +27,7 @@ development:
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
   # When left blank, PostgreSQL will use default role. This is
-  # the same name as the operating system user running Rails.
+  # same name as operating system user running Rails.
   #username: at_dawn_i_am
 
   # The password associated with PostgreSQL role (username).
